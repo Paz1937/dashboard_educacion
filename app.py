@@ -21,7 +21,7 @@ st.markdown("""
         color: white;
         border-radius: 15px;
         height: 120px; /* Aumentamos la altura */
-        font-size: 20px; /* Letra más grande */
+        font-size: 70px; /* Letra más grande */
         font-weight: bold;
         border: 2px solid #3d3dcf;
         transition: all 0.3s ease;
@@ -89,11 +89,11 @@ with fila1_col2:
         st.session_state.programa_seleccionado = "Vouchers"
 
 with fila1_col3:
-    if st.button("❤️ Becas Fortalecimiento", use_container_width=True):
+    if st.button("🤝 Becas Fortalecimiento Socioeducativo", use_container_width=True):
         st.session_state.programa_seleccionado = "Becas"
 
 with fila1_col4:
-    if st.button("🍴 Comedores Escolares", use_container_width=True):
+    if st.button("🏘️ Comedores Escolares", use_container_width=True):
         st.session_state.programa_seleccionado = "Comedores"
 
 with fila2_col1:
@@ -105,7 +105,7 @@ with fila2_col2:
         st.session_state.programa_seleccionado = "Ferias"
 
 with fila2_col3:
-    if st.button("🏆 Olimpiadas", use_container_width=True):
+    if st.button("🥇 Olimpiadas", use_container_width=True):
         st.session_state.programa_seleccionado = "Olimpiadas"
 
 st.divider()
@@ -297,3 +297,63 @@ elif st.session_state.programa_seleccionado == "Becas":
 
     except Exception as e:
         st.error(f"Error técnico: {e}")
+        
+elif st.session_state.programa_seleccionado == "Libros":
+    try:
+        # 1. Cargar el Excel
+        df_libros = pd.read_excel("Libros_Anexo_III.xlsx")
+        
+        # Limpieza: Asegurar que Cantidad sea numérica
+        df_libros['Cantidad'] = pd.to_numeric(df_libros['Cantidad'], errors='coerce').fillna(0)
+
+        st.info("Distribución Nacional de Libros - Anexo III")
+
+        # --- TABLA COMPLETA ---
+        st.write("### Detalle General de Títulos y Distribución")
+        # Usamos un expander para que no ocupe tanto espacio visual de entrada
+        with st.expander("Ver tabla de datos completa"):
+            st.dataframe(df_libros, use_container_width=True)
+
+        st.divider()
+
+        # --- MÉTRICAS RÁPIDAS ---
+        total_libros = df_libros['Cantidad'].sum()
+        total_editoriales = df_libros['Editorial'].nunique()
+        
+        c1, c2 = st.columns(2)
+        c1.metric("Total de Ejemplares", f"{total_libros:,.0f}")
+        c2.metric("Editoriales Participantes", total_editoriales)
+
+        # --- GRÁFICOS ---
+        col_l1, col_l2 = st.columns(2)
+
+        with col_l1:
+            st.write("#### 📍 Cantidad por Jurisdicción")
+            # Gráfico A: Suma de Cantidad por Jurisdicción
+            df_juris = df_libros.groupby('Jurisdicción')['Cantidad'].sum().reset_index().sort_values('Cantidad', ascending=False)
+            
+            fig_juris = px.bar(df_juris, 
+                               x='Jurisdicción', 
+                               y='Cantidad',
+                               color='Cantidad',
+                               color_continuous_scale='Blues',
+                               title="Total Libros por Provincia")
+            st.plotly_chart(fig_juris, use_container_width=True)
+
+        with col_l2:
+            st.write("#### 📚 Distribución por Área y Grado")
+            # Gráfico B: Análisis de contenido (Cantidad por Área y Grado)
+            # Este gráfico muestra qué materias y qué niveles están recibiendo más libros
+            df_area = df_libros.groupby(['Área', 'Grado'])['Cantidad'].sum().reset_index()
+            
+            fig_area = px.bar(df_area, 
+                              x='Grado', 
+                              y='Cantidad', 
+                              color='Área',
+                              barmode='group',
+                              title="Libros por Área Temática y Grado",
+                              color_discrete_sequence=px.colors.qualitative.Pastel)
+            st.plotly_chart(fig_area, use_container_width=True)
+
+    except Exception as e:
+        st.error(f"Error al procesar el archivo de Libros: {e}")
