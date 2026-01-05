@@ -11,26 +11,26 @@ st.markdown("""
     <style>
     /* 1. Fondo principal y barra lateral */
     .stApp {
-        background-color: #1a1a4b; /* Azul profundo institucional */
+        background-color: #232D4F; /* Azul profundo institucional */
         color: white;
     }
     
     /* 2. Estilo de los Botones (Grandes y Azules) */
     div.stButton > button {
-        background-color: #2b2b8c;
+        background-color: #3E5A7E;
         color: white;
         border-radius: 15px;
         height: 120px; /* Aumentamos la altura */
         font-size: 70px; /* Letra más grande */
         font-weight: bold;
-        border: 2px solid #3d3dcf;
+        border: 2px solid #E7BA61;
         transition: all 0.3s ease;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
     }
 
     /* 3. Efecto al pasar el mouse por el botón */
     div.stButton > button:hover {
-        background-color: #3d3dcf;
+        background-color: #5A7290;
         border-color: #ffffff;
         transform: scale(1.02); /* Efecto de crecimiento leve */
     }
@@ -57,7 +57,7 @@ try:
     
     # Puedes mostrarlo en la columna central para que luzca institucional
     col_log1, col_log2, col_log3 = st.columns([1, 2, 1])
-    with col_log2:
+    with col_log3:
         st.image(logo, use_container_width=True)
 except FileNotFoundError:
     st.error("No se encontró el archivo del logo. Verifica que el nombre sea exacto.")
@@ -78,7 +78,7 @@ fila2_col1, fila2_col2, fila2_col3, fila2_col4 = st.columns(4)
 # Lógica de los botones
 # Usamos 'session_state' para recordar qué programa se hizo clic
 if "programa_seleccionado" not in st.session_state:
-    st.session_state.programa_seleccionado = "General"
+    st.session_state.programa_seleccionado = " "
 
 with fila1_col1:
     if st.button("🎓 Progresar", use_container_width=True):
